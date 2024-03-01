@@ -7,7 +7,8 @@ app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'])
 def upload_file():
     for file in os.listdir('./output'):
-        os.remove(f'./output/{file}')
+        if file.endswith('.py'):
+            os.remove(f'./output/{file}')
     if request.method == "POST" and request.files.get('file'):
         file = request.files["file"]
         filename = file.filename
@@ -21,6 +22,6 @@ def upload_file():
                     f.write(cell['source'])
                 output += '\n'
                 f.write('\n')
-        return (send_file(new_filename, as_attachment=True), f'<span style="white-space: pre-line">{output}</span>')
+        return send_file(new_filename, as_attachment=True)
     else:
         return send_from_directory('./', "index.html")
